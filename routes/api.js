@@ -3,12 +3,18 @@ const router = express.Router();
 
 const Person = require('../db/models/person');  // pull in model
 
-//route is /api/all    to get all entries in db and display 
-router.get('/all', (req, res) => {
-
+//route is / to get all entries in db and display 
+router.get('/', (req, res) => {
+  Person.find({}, (err, result) => {
+    if(result){
+      res.render('pages/index', {'people': result})
+    } else {
+      res.status(404)
+    }
+  })
 })
 
-//route is /api/post   to send data to db
+//route is /post to send data to db
 router.post('/post', (req, res) => {
   
   const newPerson = new Person({    //create new person from model
@@ -16,7 +22,7 @@ router.post('/post', (req, res) => {
     lastName: req.body.lastName
   })
 
-  newPerson.save().then(person => res.send(person))
+  newPerson.save().then(res.redirect('/'))
   
 })
 
